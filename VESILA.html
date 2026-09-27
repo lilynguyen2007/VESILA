@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>VESILA — Virtual Enterprise Simulation Lab</title>
+<style>
+:root{--navy:#0b1f33;--blue:#1261a0;--cyan:#2ea3f2;--bg:#f4f7fb;--card:#fff;--muted:#6b7785;--line:#e4eaf1;--green:#1f9d68;--orange:#ef8a2f;--shadow:0 12px 35px rgba(16,35,55,.08)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--navy)}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{display:flex;min-height:100vh}.side{width:245px;background:var(--navy);color:#dce8f4;padding:22px 15px;position:fixed;inset:0 auto 0 0}
+.brand{font-weight:800;font-size:21px;letter-spacing:.4px;padding:7px 10px 28px;color:#fff}.brand span{color:#56b7ff}
+.nav button{display:block;width:100%;text-align:left;background:transparent;border:0;color:#afc0d1;padding:12px 13px;border-radius:10px;margin:3px 0}.nav button.active,.nav button:hover{background:#173a59;color:#fff}
+.side .role{position:absolute;bottom:20px;left:18px;right:18px;border-top:1px solid #28445c;padding-top:15px;font-size:12px;color:#91a7ba}.main{margin-left:245px;width:calc(100% - 245px);padding:30px 38px;max-width:1450px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.top h1{margin:0;font-size:27px}.user{display:flex;gap:10px;align-items:center}.avatar{width:38px;height:38px;border-radius:50%;background:#d9ebfa;display:grid;place-items:center;color:var(--blue);font-weight:800}
+.page{display:none}.page.active{display:block}.grid{display:grid;gap:18px}.g4{grid-template-columns:repeat(4,1fr)}.g2{grid-template-columns:1.35fr .65fr}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:var(--shadow)}.metric{font-size:28px;font-weight:800;margin-top:7px}.label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}.muted{color:var(--muted)}.small{font-size:13px}
+.progress{height:8px;background:#e8eef4;border-radius:99px;overflow:hidden;margin:10px 0}.bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px}
+.badge{display:inline-block;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:700;background:#eaf3fb;color:var(--blue)}.badge.green{background:#e7f7ef;color:#14784e}.badge.orange{background:#fff1e5;color:#b96217}
+h2{margin:0 0 5px;font-size:20px}h3{margin:0 0 8px;font-size:16px}.section{margin-top:20px}.task{display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid var(--line)}.task:last-child{border-bottom:0}.check{width:24px;height:24px;border:2px solid #c9d5df;border-radius:7px;display:grid;place-items:center}.done .check{background:var(--green);border-color:var(--green);color:white}.done .taskname{text-decoration:line-through;color:#82909d}
+.hero{background:linear-gradient(135deg,#0b1f33,#164e78);color:white;border-radius:18px;padding:27px;position:relative;overflow:hidden}.hero:after{content:"VESILA";position:absolute;right:-12px;bottom:-25px;font-size:110px;font-weight:900;color:rgba(255,255,255,.04)}.hero h2{font-size:25px}.hero p{max-width:680px;color:#c8d8e7}.btn{border:0;border-radius:9px;padding:10px 15px;font-weight:700;background:var(--blue);color:#fff}.btn.secondary{background:#edf3f8;color:var(--navy)}.btn.green{background:var(--green)}.btn:active{transform:translateY(1px)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:11px;text-transform:uppercase}.score{font-weight:800;color:var(--green)}
+.tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin:12px 0 18px}.tab{border:0;background:none;padding:10px 12px;color:var(--muted);border-bottom:2px solid transparent}.tab.active{color:var(--blue);border-color:var(--blue);font-weight:700}
+label{display:block;font-size:12px;font-weight:700;margin:12px 0 6px}input,textarea,select{width:100%;border:1px solid #d6e0e8;border-radius:9px;padding:10px;background:#fff}textarea{min-height:160px;resize:vertical}.notice{background:#f0f7fc;border-left:4px solid var(--cyan);padding:13px;border-radius:7px;font-size:13px}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.week{padding:15px;border:1px solid var(--line);border-radius:12px;background:#fff}.week.current{border:2px solid var(--blue)}.week b{display:block;margin-bottom:6px}.week small{color:var(--muted)}
+@media(max-width:900px){.side{width:70px}.brand{font-size:0}.brand span{font-size:18px}.nav button{font-size:0;text-align:center}.main{margin-left:70px;width:calc(100% - 70px);padding:20px}.g4{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}.timeline{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="brand">VESI<span>LA</span></div>
+  <div class="nav">
+    <button class="active" data-page="dashboard">⌂ &nbsp; Dashboard</button>
+    <button data-page="journey">◷ &nbsp; Lộ trình 4 tuần</button>
+    <button data-page="simulation">◈ &nbsp; Simulation Lab</button>
+    <button data-page="email">✉ &nbsp; Business Email</button>
+    <button data-page="quote">▦ &nbsp; Quote & Incoterms</button>
+    <button data-page="portfolio">▣ &nbsp; Portfolio</button>
+  </div>
+  <div class="role">STUDENT MODE<br><b>International Sales Assistant</b><br>Demo cohort · 01</div>
+</aside>
+
+<main class="main">
+<header class="top"><h1 id="title">Dashboard</h1><div class="user"><span class="badge green">Week 2 · Active</span><div class="avatar">BC</div></div></header>
+
+<section id="dashboard" class="page active">
+  <div class="hero">
+    <span class="badge">VIRTUAL ENTERPRISE SIMULATION</span>
+    <h2>Chào Bảo Chi. Hôm nay bạn đang làm việc cho một doanh nghiệp xuất khẩu.</h2>
+    <p>Case: <b>GreenBite Vietnam</b> muốn mở rộng thị trường snack healthy sang Thái Lan. Bạn là International Sales Assistant.</p>
+    <button class="btn" onclick="go('simulation')">Tiếp tục nhiệm vụ →</button>
+  </div>
+  <div class="grid g4 section">
+    <div class="card"><div class="label">Tiến độ</div><div class="metric">42%</div><div class="progress"><div class="bar" style="width:42%"></div></div><span class="small muted">Tuần 2 / 4</span></div>
+    <div class="card"><div class="label">Năng lực</div><div class="metric">72/100</div><span class="badge green">+18 vs. pre-test</span></div>
+    <div class="card"><div class="label">Portfolio</div><div class="metric">4</div><span class="small muted">deliverables hoàn thành</span></div>
+    <div class="card"><div class="label">Deadline</div><div class="metric">3d</div><span class="badge orange">Market research</span></div>
+  </div>
+  <div class="grid g2 section">
+    <div class="card"><h2>Nhiệm vụ đang mở</h2><p class="muted small">Tuần 2 · Nghiên cứu thị trường & tìm đối tác</p>
+      <div class="task" onclick="go('simulation')"><div class="check">→</div><div><b class="taskname">Chọn thị trường mục tiêu</b><div class="small muted">Thailand · Food & Beverage</div></div><span class="badge">Open</span></div>
+      <div class="task" onclick="go('simulation')"><div class="check">→</div><div><b class="taskname">Sàng lọc 10 đối tác B2B</b><div class="small muted">Public sources only</div></div><span class="badge">Open</span></div>
+      <div class="task done"><div class="check">✓</div><div><b class="taskname">Xác định product brief</b><div class="small muted">GreenBite Healthy Snack</div></div><span class="badge green">Done</span></div>
+    </div>
+    <div class="card"><h2>Năng lực của bạn</h2><div class="small muted">Market research</div><div class="progress"><div class="bar" style="width:78%"></div></div>
+      <div class="small muted">Business English</div><div class="progress"><div class="bar" style="width:68%"></div></div>
+      <div class="small muted">Trade process</div><div class="progress"><div class="bar" style="width:63%"></div></div>
+      <div class="small muted">Data accuracy</div><div class="progress"><div class="bar" style="width:74%"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="journey" class="page">
+  <div class="card"><h2>4-Week Virtual Internship Journey</h2><p class="muted">MVP của VESILA rút gọn chương trình thành 4 tuần để kiểm chứng trải nghiệm.</p>
+  <div class="timeline">
+    <div class="week"><b>Week 1</b><span class="badge green">Done</span><small>Career map & role onboarding</small></div>
+    <div class="week current"><b>Week 2</b><span class="badge">Current</span><small>Market research & partner sourcing</small></div>
+    <div class="week"><b>Week 3</b><span class="badge orange">Locked</span><small>Business email & communication</small></div>
+    <div class="week"><b>Week 4</b><span class="badge orange">Locked</span><small>Quote, presentation & final project</small></div>
+  </div></div>
+  <div class="grid g2 section"><div class="card"><h2>Learning outcomes</h2>
+  <div class="task done"><div class="check">✓</div><div><b>Market & partner research</b><div class="small muted">Tìm kiếm và sàng lọc đối tác nước ngoài</div></div></div>
+  <div class="task"><div class="check">2</div><div><b>Commercial English</b><div class="small muted">Viết email theo tình huống doanh nghiệp</div></div></div>
+  <div class="task"><div class="check">3</div><div><b>Trade transaction</b><div class="small muted">Quote, Incoterms, basic cost comparison</div></div></div>
+  <div class="task"><div class="check">4</div><div><b>Pitch & portfolio</b><div class="small muted">Trình bày đề xuất bằng Việt/Anh</div></div></div></div>
+  <div class="card"><h2>Assessment</h2><table><tr><td>Market research</td><td class="score">20%</td></tr><tr><td>Partner screening</td><td class="score">15%</td></tr><tr><td>Business email</td><td class="score">20%</td></tr><tr><td>Trade process</td><td class="score">15%</td></tr><tr><td>Data accuracy</td><td class="score">10%</td></tr><tr><td>Presentation</td><td class="score">10%</td></tr><tr><td>Professionalism</td><td class="score">10%</td></tr></table></div></div>
+</section>
+
+<section id="simulation" class="page">
+  <div class="card"><div style="display:flex;justify-content:space-between;gap:15px;align-items:start"><div><span class="badge">LIVE CASE · THAILAND</span><h2 style="margin-top:9px">Project: GreenBite enters Thailand</h2><p class="muted">Bạn cần đề xuất cách tìm khách hàng B2B tại Thái Lan cho một doanh nghiệp Việt Nam trong ngành thực phẩm.</p></div><span class="badge orange">2 / 4 tasks</span></div>
+  <div class="notice"><b>Brief từ Sales Manager:</b> “We need 10 qualified B2B leads in Thailand. Prioritize distributors, healthy-food retailers and importers. Use public information and explain why each lead fits.”</div>
+  <div class="tabs"><button class="tab active" onclick="tab(this,'brief')">Brief</button><button class="tab" onclick="tab(this,'leads')">Lead shortlist</button><button class="tab" onclick="tab(this,'market')">Market notes</button></div>
+  <div id="brief" class="tabcontent"><h3>Your deliverable</h3><ol><li>Select target segment.</li><li>Build a shortlist of 10 potential B2B partners.</li><li>Record company, segment, evidence and fit rationale.</li><li>Prepare 3 priority leads for outreach.</li></ol><button class="btn" onclick="tabById('leads')">Open lead board →</button></div>
+  <div id="leads" class="tabcontent" style="display:none"><table><tr><th>Company</th><th>Segment</th><th>Fit</th><th>Status</th></tr>
+  <tr><td>Thai Healthy Distribution</td><td>Distributor</td><td>High</td><td><span class="badge green">Priority</span></td></tr>
+  <tr><td>Bangkok Wellness Retail</td><td>Retailer</td><td>High</td><td><span class="badge green">Priority</span></td></tr>
+  <tr><td>Asia Food Import Hub</td><td>Importer</td><td>Medium</td><td><span class="badge">Review</span></td></tr></table><p class="small muted">Demo data — prototype only. Production version sẽ kết nối nguồn dữ liệu công khai và yêu cầu người học tự ghi evidence.</p></div>
+  <div id="market" class="tabcontent" style="display:none"><label>Market insight</label><textarea id="marketText" placeholder="Viết 3 insight bạn rút ra từ nghiên cứu..."></textarea><button class="btn" onclick="save('marketText')">Save to portfolio</button></div>
+  </div>
+</section>
+
+<section id="email" class="page">
+ <div class="grid g2"><div class="card"><span class="badge">WEEK 3 PREVIEW</span><h2 style="margin-top:8px">Commercial Email Simulator</h2><p class="muted small">Viết email tiếp cận một potential distributor. Sau khi submit, hệ thống sẽ chấm theo rubric mô phỏng.</p>
+ <label>To</label><input value="procurement@thaihealthy.example"/><label>Subject</label><input id="subject" value="GreenBite Vietnam — Healthy Snack Distribution in Thailand"/><label>Email</label><textarea id="emailText">Dear Procurement Team,
+
+My name is Bao Chi from GreenBite Vietnam. We are exploring distribution opportunities for our healthy snack products in Thailand.
+
+I would be pleased to share our product information and discuss whether our products could fit your portfolio.
+
+Best regards,
+Bao Chi
+International Sales Assistant</textarea><button class="btn" onclick="gradeEmail()">Submit for feedback</button></div>
+ <div class="card"><h2>AI / Mentor feedback</h2><div id="feedback"><p class="muted">Submit your email to receive a simulated assessment.</p></div></div></div>
+</section>
+
+<section id="quote" class="page">
+ <div class="card"><span class="badge">WEEK 4 PREVIEW</span><h2 style="margin-top:8px">Quote & Incoterms Challenge</h2><p class="muted">So sánh hai phương án giao hàng cho cùng một shipment.</p>
+ <table><tr><th></th><th>Option A</th><th>Option B</th></tr><tr><td>Incoterm</td><td>FOB Laem Chabang</td><td>CIF Laem Chabang</td></tr><tr><td>Product value</td><td>$12,000</td><td>$12,000</td></tr><tr><td>Freight</td><td>$0</td><td>$650</td></tr><tr><td>Insurance</td><td>$0</td><td>$90</td></tr><tr><td>Total quoted</td><td><b>$12,000</b></td><td><b>$12,740</b></td></tr></table>
+ <div class="notice" style="margin-top:15px"><b>Decision task:</b> Không chỉ chọn giá thấp hơn. Hãy giải thích sự khác biệt về trách nhiệm, chi phí và rủi ro.</div>
+ <label>Your recommendation rationale</label><textarea id="quoteText" placeholder="Viết rationale của bạn..."></textarea><button class="btn" onclick="save('quoteText')">Add to portfolio</button>
+ </div>
+</section>
+
+<section id="portfolio" class="page">
+ <div class="hero"><span class="badge">YOUR WORK EVIDENCE</span><h2>Career Portfolio</h2><p>Không chỉ có certificate. Đây là bằng chứng về những gì bạn có thể làm.</p><button class="btn" onclick="alert('Demo: Portfolio export sẽ được phát triển ở phiên bản tiếp theo.')">Export portfolio</button></div>
+ <div class="grid g2 section"><div class="card"><h2>Deliverables</h2>
+ <div class="task done"><div class="check">✓</div><div><b>Career profile & target role</b><div class="small muted">Week 1</div></div></div>
+ <div class="task done"><div class="check">✓</div><div><b>Market & partner shortlist</b><div class="small muted">Week 2</div></div></div>
+ <div class="task"><div class="check">3</div><div><b>Commercial email pack</b><div class="small muted">Week 3</div></div></div>
+ <div class="task"><div class="check">4</div><div><b>Quote comparison + final pitch</b><div class="small muted">Week 4</div></div></div></div>
+ <div class="card"><h2>Skill evidence</h2><table><tr><td>Research & analysis</td><td class="score">78</td></tr><tr><td>Partner sourcing</td><td class="score">74</td></tr><tr><td>Business English</td><td class="score">68</td></tr><tr><td>Trade process</td><td class="score">63</td></tr><tr><td>Data accuracy</td><td class="score">74</td></tr></table></div></div>
+</section>
+</main></div>
+
+<script>
+const titles={dashboard:'Dashboard',journey:'Lộ trình 4 tuần',simulation:'Simulation Lab',email:'Business Email',quote:'Quote & Incoterms',portfolio:'Portfolio'};
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));document.getElementById('title').textContent=titles[id];window.scrollTo(0,0)}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.page));
+function tab(btn,id){btn.parentElement.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');btn.closest('.card').querySelectorAll('.tabcontent').forEach(x=>x.style.display='none');document.getElementById(id).style.display='block'}
+function tabById(id){const card=document.getElementById(id).closest('.card');const btn=[...card.querySelectorAll('.tab')].find(x=>x.textContent.toLowerCase().includes(id));if(btn)tab(btn,id);else{card.querySelectorAll('.tabcontent').forEach(x=>x.style.display='none');document.getElementById(id).style.display='block'}}
+function gradeEmail(){const text=document.getElementById('emailText').value;let score=55;if(text.toLowerCase().includes('dear'))score+=8;if(text.toLowerCase().includes('opportunity'))score+=8;if(text.toLowerCase().includes('product'))score+=7;if(text.toLowerCase().includes('discuss'))score+=7;if(text.toLowerCase().includes('best regards'))score+=5;document.getElementById('feedback').innerHTML=`<div class="metric">${Math.min(score,100)}/100</div><p><b>✓ Structure:</b> clear opening, purpose and closing.</p><p><b>✓ Professional tone:</b> appropriate for first contact.</p><p><b>→ Improve:</b> add one concrete value proposition and a clear call-to-action.</p><span class="badge green">Saved as assessment evidence</span>`}
+function save(id){const v=document.getElementById(id).value.trim();if(!v){alert('Hãy nhập nội dung trước.');return}alert('Đã lưu deliverable vào Portfolio (demo).')}
+</script>
+</body>
+</html>
